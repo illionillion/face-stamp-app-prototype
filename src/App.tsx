@@ -84,7 +84,7 @@ function App() {
         !!exportImages.length &&
         <Carousel slideSize="50%" align="center">
           {exportImages.map((image, index) => (
-            <CarouselSlide as={Center} bg="primary" key={index} position="relative" justifyContent="center" alignContent="center">
+            <CarouselSlide as={Center} key={index} position="relative" justifyContent="center" alignContent="center">
               <Img src={image.url} w="full" />
               <Button as="a" position="absolute" margin="auto" w="2xs" href={image.url} download={image.name} bottom={10} left={0} right={0}>ダウンロード</Button>
             </CarouselSlide>
