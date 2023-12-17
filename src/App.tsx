@@ -77,7 +77,7 @@ function App() {
         isLoading={isLoading}
         onDropAccepted={handleAcceptedFile}
       >
-        <Text>画像をドラックアンドドロップ</Text>
+        <Text>顔が写った画像をドラックアンドドロップ</Text>
       </Dropzone>
       {
         !!exportImages.length &&
