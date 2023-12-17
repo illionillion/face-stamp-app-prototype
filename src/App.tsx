@@ -1,4 +1,4 @@
-import { Button,  Center, Container, Heading, Image as Img, Text } from "@yamada-ui/react"
+import { Button, Center, Container, Heading, Image as Img, Text } from "@yamada-ui/react"
 import { Dropzone } from "@yamada-ui/dropzone"
 import { Carousel, CarouselSlide } from "@yamada-ui/carousel"
 import * as faceapi from '@vladmandic/face-api';
@@ -29,7 +29,7 @@ function App() {
 
   const handleAcceptedFile = async (files: File[]) => {
     setIsLoading(true)
-    await faceapi.nets.ssdMobilenetv1.loadFromUri('/model');
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + '/model');
     const images: exportImages[] = []
 
     for (let i = 0; i < files.length; i++) {
@@ -85,8 +85,8 @@ function App() {
         <Carousel slideSize="50%" align="center">
           {exportImages.map((image, index) => (
             <CarouselSlide as={Center} bg="primary" key={index} position="relative" justifyContent="center" alignContent="center">
-                <Img src={image.url} w="full" />
-                <Button as="a" position="absolute" margin="auto" w="2xs" href={image.url} download={image.name} bottom={10} left={0} right={0}>ダウンロード</Button>
+              <Img src={image.url} w="full" />
+              <Button as="a" position="absolute" margin="auto" w="2xs" href={image.url} download={image.name} bottom={10} left={0} right={0}>ダウンロード</Button>
             </CarouselSlide>
           ))}
         </Carousel>}
