@@ -29,7 +29,7 @@ function App() {
 
   const handleAcceptedFile = async (files: File[]) => {
     setIsLoading(true)
-    await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + '/model');
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
     const images: exportImages[] = []
 
     for (let i = 0; i < files.length; i++) {
