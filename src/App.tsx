@@ -15,6 +15,7 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [exportImages, setExportImages] = useState<exportImages[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
 
   const getCanvas = (ref: RefObject<HTMLCanvasElement>): HTMLCanvasElement => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
@@ -27,9 +28,15 @@ function App() {
     return canvas.getContext('2d') as CanvasRenderingContext2D;
   };
 
+  const loadModel = async () => {
+    if(isModelLoading) return;
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
+    setIsModelLoading(true);
+  };
+
   const handleAcceptedFile = async (files: File[]) => {
     setIsLoading(true);
-    await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
+    await loadModel();
     const images: exportImages[] = [];
 
     for (let i = 0; i < files.length; i++) {
