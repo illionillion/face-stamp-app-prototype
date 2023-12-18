@@ -3,12 +3,26 @@ import { Carousel, CarouselSlide } from '@yamada-ui/carousel';
 import { Dropzone } from '@yamada-ui/dropzone';
 import { Button, Center, Container, Heading, Image as Img, Text } from '@yamada-ui/react';
 import type { RefObject } from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type exportImages = {
   name: string;
   url: string;
 }
+
+const iconPathList = [
+  'beaming_face_with_smiling_eyes-64.png',
+  'face_with_tears_of_joy-64.png',
+  'grinning_face_with_big_eyes-64.png',
+  'grinning_face_with_smiling_eyes-64.png',
+  'grinning_face-64.png',
+  'grinning_squinting_face-64.png',
+  'rolling_on_the_floor_laughing-64.png',
+  'smiling_face_with_halo-64.png',
+  'smiling_face_with_hearts-64.png',
+  'smiling_face_with_smiling_eyes-64.png',
+  'winking_face-64.png',
+];
 
 function App() {
 
@@ -16,6 +30,7 @@ function App() {
   const [exportImages, setExportImages] = useState<exportImages[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
+  const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
 
   const getCanvas = (ref: RefObject<HTMLCanvasElement>): HTMLCanvasElement => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
@@ -31,12 +46,16 @@ function App() {
   const loadModel = async () => {
     if(isModelLoading) return;
     await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
+    setIconList(iconPathList.map(item => {
+      const img = new Image();
+      img.src = import.meta.env.BASE_URL + `icons/${item}`;
+      return img;
+    }));
     setIsModelLoading(true);
   };
 
   const handleAcceptedFile = async (files: File[]) => {
     setIsLoading(true);
-    await loadModel();
     const images: exportImages[] = [];
 
     for (let i = 0; i < files.length; i++) {
@@ -51,17 +70,10 @@ function App() {
       context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
 
       for (const fc of results) {
-        context.beginPath();
-        context.rect(
-          fc.box.x,
-          fc.box.y,
-          fc.box.width,
-          fc.box.height
-        );
-        context.lineWidth = 1;
-        context.fillStyle = 'black';
-        context.fill();
+        const stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        context.drawImage(stamp, fc.box.x, fc.box.y, fc.box.width, fc.box.height);
       }
+
       const base64 = canvas.toDataURL('image/jpeg');
       images.push({
         name: file.name,
@@ -73,6 +85,10 @@ function App() {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    loadModel();
+  },[]);
+
   return (
     <Container>
       <Heading textAlign="center">Face Masking App</Heading>
@@ -81,7 +97,7 @@ function App() {
         accept={{
           'image/*': []
         }}
-        isLoading={isLoading}
+        isLoading={isLoading || !isModelLoading}
         onDropAccepted={handleAcceptedFile}
       >
         <Text>顔が写った画像をドラックアンドドロップ</Text>
