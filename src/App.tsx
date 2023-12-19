@@ -1,5 +1,5 @@
 import * as faceapi from '@vladmandic/face-api';
-import { Carousel, CarouselSlide } from '@yamada-ui/carousel';
+import { Carousel, CarouselIndicators, CarouselSlide } from '@yamada-ui/carousel';
 import { Dropzone } from '@yamada-ui/dropzone';
 import { Button, Center, Container, Heading, Image as Img, Text } from '@yamada-ui/react';
 import type { RefObject } from 'react';
@@ -45,7 +45,7 @@ function App() {
   };
 
   const loadModel = async () => {
-    if(isModelLoading) return;
+    if (isModelLoading) return;
     await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
     setIconList(iconPathList.map(item => {
       const img = new Image();
@@ -88,7 +88,7 @@ function App() {
 
   useEffect(() => {
     loadModel();
-  },[]);
+  }, []);
 
   return (
     <Container>
@@ -105,9 +105,12 @@ function App() {
       </Dropzone>
       {
         !!exportImages.length &&
-        <Carousel slideSize="50%" align="center">
+        <Carousel slideSize="50%" align="center" controlProps={{
+          background: 'blackAlpha.500'
+        }}
+        >
           {exportImages.map((image, index) => (
-            <CarouselSlide key={index} as={Center} position="relative" justifyContent="center" alignContent="center">
+            <CarouselSlide key={index} as={Center} position="relative" justifyContent="center" alignContent="center" background='blackAlpha.100'>
               <Img src={image.url} w="full" />
               <Button
                 as="a"
@@ -125,6 +128,15 @@ function App() {
               >ダウンロード</Button>
             </CarouselSlide>
           ))}
+
+          <CarouselIndicators sx={{
+            '& > *': {
+              _selected: {
+                background: 'blackAlpha.950'
+              },
+              background: 'blackAlpha.500'
+            }
+          }} />
         </Carousel>}
     </Container>
   );
