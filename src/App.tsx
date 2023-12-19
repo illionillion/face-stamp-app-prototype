@@ -130,7 +130,7 @@ function App() {
           ))}
 
           <CarouselIndicators sx={{
-            '& > *': {
+            '& > button': {
               _selected: {
                 background: 'blackAlpha.950'
               },
