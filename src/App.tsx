@@ -4,6 +4,7 @@ import { Dropzone } from '@yamada-ui/dropzone';
 import { Button, Center, Container, Heading, Image as Img, Text } from '@yamada-ui/react';
 import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { IoMdDownload } from 'react-icons/io';
 
 type exportImages = {
   name: string;
@@ -108,7 +109,20 @@ function App() {
           {exportImages.map((image, index) => (
             <CarouselSlide key={index} as={Center} position="relative" justifyContent="center" alignContent="center">
               <Img src={image.url} w="full" />
-              <Button as="a" position="absolute" margin="auto" w="2xs" href={image.url} download={image.name} bottom={10} left={0} right={0}>ダウンロード</Button>
+              <Button
+                as="a"
+                position="absolute"
+                margin="auto"
+                w="fit-content"
+                href={image.url}
+                download={image.name}
+                bottom={10}
+                left={0}
+                right={0}
+                variant="solid"
+                colorScheme="primary"
+                rightIcon={<IoMdDownload />}
+              >ダウンロード</Button>
             </CarouselSlide>
           ))}
         </Carousel>}
