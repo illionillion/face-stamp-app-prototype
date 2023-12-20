@@ -11,7 +11,7 @@ type exportImages = {
   url: string;
 }
 
-const iconPathList = [
+const iconNameList = [
   'beaming_face_with_smiling_eyes-64.png',
   'face_with_tears_of_joy-64.png',
   'grinning_face_with_big_eyes-64.png',
@@ -49,7 +49,7 @@ function App() {
   const loadData = async () => {
     if (isModelLoading) return;
     await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
-    setIconList(iconPathList.map(item => {
+    setIconList(iconNameList.map(item => {
       const img = new Image();
       img.src = import.meta.env.BASE_URL + `icons/${item}`;
       return img;
