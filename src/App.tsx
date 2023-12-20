@@ -11,6 +11,9 @@ type exportImages = {
   url: string;
 }
 
+/**
+ * アイコン名のリスト
+ */
 const iconNameList = [
   'beaming_face_with_smiling_eyes-64.png',
   'face_with_tears_of_joy-64.png',
@@ -35,17 +38,32 @@ function App() {
   const os = useOS();
   const isDropzone = os === 'linux' || os === 'macos' || os === 'windows';
 
+  /**
+   * Canvasの取得
+   * @param ref 
+   * @returns 
+   */
   const getCanvas = (ref: RefObject<HTMLCanvasElement>): HTMLCanvasElement => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
 
     return canvas;
   };
+
+  /**
+   * Contextの取得
+   * @param ref 
+   * @returns 
+   */
   const getContext = (ref: RefObject<HTMLCanvasElement>): CanvasRenderingContext2D => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
 
     return canvas.getContext('2d') as CanvasRenderingContext2D;
   };
 
+  /**
+   * モデルとアイコン画像の読み込み
+   * @returns 
+   */
   const loadData = async () => {
     if (isModelLoading) return;
     await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
@@ -57,6 +75,11 @@ function App() {
     setIsModelLoading(true);
   };
 
+  /**
+   * ファイル受け取り時の処理
+   * @param files 
+   * @returns 
+   */
   const handleAcceptedFile = async (files: File[] | undefined) => {
     if (files === undefined || files.length === 0) return;
     setIsLoading(true);
