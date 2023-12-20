@@ -46,7 +46,7 @@ function App() {
     return canvas.getContext('2d') as CanvasRenderingContext2D;
   };
 
-  const loadModel = async () => {
+  const loadData = async () => {
     if (isModelLoading) return;
     await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
     setIconList(iconPathList.map(item => {
@@ -90,7 +90,7 @@ function App() {
   };
 
   useEffect(() => {
-    loadModel();
+    loadData();
   }, []);
 
   return (
