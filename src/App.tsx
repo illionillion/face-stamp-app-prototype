@@ -1,7 +1,7 @@
 import * as faceapi from '@vladmandic/face-api';
 import { Carousel, CarouselIndicators, CarouselSlide } from '@yamada-ui/carousel';
 import { Dropzone } from '@yamada-ui/dropzone';
-import { Button, Center, Container, Heading, Image as Img, Text } from '@yamada-ui/react';
+import { Button, Center, Container, FileButton, Heading, Image as Img, Text, useOS } from '@yamada-ui/react';
 import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
@@ -32,6 +32,8 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
+  const os = useOS();
+  const isDropzone = os === 'linux' || os === 'macos' || os === 'windows';
 
   const getCanvas = (ref: RefObject<HTMLCanvasElement>): HTMLCanvasElement => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
@@ -55,7 +57,8 @@ function App() {
     setIsModelLoading(true);
   };
 
-  const handleAcceptedFile = async (files: File[]) => {
+  const handleAcceptedFile = async (files: File[] | undefined) => {
+    if (files === undefined || files.length === 0) return;
     setIsLoading(true);
     const images: exportImages[] = [];
 
@@ -94,15 +97,24 @@ function App() {
     <Container>
       <Heading textAlign="center">Face Masking App</Heading>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <Dropzone multiple
-        accept={{
-          'image/*': []
-        }}
-        isLoading={isLoading || !isModelLoading}
-        onDropAccepted={handleAcceptedFile}
-      >
-        <Text>顔が写った画像をドラックアンドドロップ</Text>
-      </Dropzone>
+      {isDropzone ?
+        <Dropzone multiple
+          accept={{
+            'image/*': []
+          }}
+          isLoading={isLoading || !isModelLoading}
+          onDropAccepted={handleAcceptedFile}
+        >
+          <Text>顔が写った画像をドラックアンドドロップ</Text>
+        </Dropzone>
+        :
+        <FileButton
+          multiple
+          isLoading={isLoading || !isModelLoading}
+          accept='image/*'
+          onChange={handleAcceptedFile}
+        >顔が写った画像を選択</FileButton>
+      }
       {
         !!exportImages.length &&
         <Carousel slideSize="50%" align="center" controlProps={{
