@@ -168,7 +168,7 @@ function App() {
         }}
         >
           {exportImages.map((image, index) => (
-            <CarouselSlide key={index} as={Center} position="relative" justifyContent="center" alignContent="center" background='blackAlpha.100'>
+            <CarouselSlide key={index} as={Center} position="relative" background='blackAlpha.100'>
               <Img src={image.url} w="full" />
               <Button
                 as="a"
