@@ -128,7 +128,7 @@ function App() {
    * LINEのブラウザかチェック
    */
   const isLine = () => {
-    if (navigator.userAgent.toUpperCase().includes('LINE')) {
+    if (navigator.userAgent.toUpperCase().includes('LINE') && navigator.userAgent.toUpperCase().includes('ANDROID')) {
       NSModalOpen();
       window.location.href += '?openExternalBrowser=1';
     }
