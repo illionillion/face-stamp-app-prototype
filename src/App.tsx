@@ -113,6 +113,9 @@ function App() {
   };
 
   useEffect(() => {
+    if (navigator.userAgent.toUpperCase().includes('LINE')) {
+      window.location.href += '?openExternalBrowser=1'
+    }
     loadData();
   }, []);
 
