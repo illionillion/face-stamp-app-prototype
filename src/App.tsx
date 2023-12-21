@@ -1,10 +1,11 @@
 import * as faceapi from '@vladmandic/face-api';
 import { Carousel, CarouselIndicators, CarouselSlide } from '@yamada-ui/carousel';
 import { Dropzone } from '@yamada-ui/dropzone';
-import { Button, Center, Container, FileButton, Heading, Image as Img, Text, useOS } from '@yamada-ui/react';
+import { Button, Center, Container, FileButton, Heading, Image as Img, Text, useDisclosure, useOS } from '@yamada-ui/react';
 import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
+import { NotSupportModal } from './components/NotSupportModal';
 
 type exportImages = {
   name: string;
@@ -35,6 +36,10 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
+  const {
+    isOpen: isNSModalOpen,
+    onOpen: NSModalOpen,
+  } = useDisclosure();
   const os = useOS();
   const isDropzone = os === 'linux' || os === 'macos' || os === 'windows';
 
@@ -112,7 +117,25 @@ function App() {
     setIsLoading(false);
   };
 
+  /**
+   * モーダルのボタンクリック時に遷移
+   */
+  const handleNSModalClick = () => {
+    window.location.href += '?openExternalBrowser=1';
+  };
+
+  /**
+   * LINEのブラウザかチェック
+   */
+  const isLine = () => {
+    if (navigator.userAgent.toUpperCase().includes('LINE')) {
+      NSModalOpen();
+      window.location.href += '?openExternalBrowser=1';
+    }
+  };
+
   useEffect(() => {
+    isLine();
     loadData();
   }, []);
 
@@ -173,6 +196,7 @@ function App() {
             }
           }} />
         </Carousel>}
+      <NotSupportModal isOpen={isNSModalOpen} onClick={handleNSModalClick} />
     </Container>
   );
 }
