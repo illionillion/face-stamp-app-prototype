@@ -9,7 +9,8 @@
     "rebuild": "tsc && vite build && rm -R docs && cp -r dist docs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx,js --report-unused-disable-directives --max-warnings 0 --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -28,10 +29,12 @@
     "@yamada-ui/react": "^0.9.4",
     "eslint": "^8.45.0",
     "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-prettier": "^5.1.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.1.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }
