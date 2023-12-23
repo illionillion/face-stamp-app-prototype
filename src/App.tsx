@@ -140,7 +140,7 @@ function App() {
   }, []);
 
   return (
-    <Container>
+    <Container height="100dvh" justifyContent="center">
       <Heading textAlign="center">Face Masking App</Heading>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {isDropzone ?
@@ -163,7 +163,7 @@ function App() {
       }
       {
         !!exportImages.length &&
-        <Carousel slideSize="50%" align="center" controlProps={{
+        <Carousel slideSize={isDropzone ? '50%' : 'full'} align="center" controlProps={{
           background: 'blackAlpha.500'
         }}
         >
