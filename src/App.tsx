@@ -1,7 +1,21 @@
 import * as faceapi from '@vladmandic/face-api';
-import { Carousel, CarouselIndicators, CarouselSlide } from '@yamada-ui/carousel';
+import {
+  Carousel,
+  CarouselIndicators,
+  CarouselSlide,
+} from '@yamada-ui/carousel';
 import { Dropzone } from '@yamada-ui/dropzone';
-import { Button, Center, Container, FileButton, Heading, Image as Img, Text, useDisclosure, useOS } from '@yamada-ui/react';
+import {
+  Button,
+  Center,
+  Container,
+  FileButton,
+  Heading,
+  Image as Img,
+  Text,
+  useDisclosure,
+  useOS,
+} from '@yamada-ui/react';
 import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
@@ -10,7 +24,7 @@ import { NotSupportModal } from './components/NotSupportModal';
 type exportImages = {
   name: string;
   url: string;
-}
+};
 
 /**
  * アイコン名のリスト
@@ -30,23 +44,19 @@ const iconNameList = [
 ];
 
 function App() {
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [exportImages, setExportImages] = useState<exportImages[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
-  const {
-    isOpen: isNSModalOpen,
-    onOpen: NSModalOpen,
-  } = useDisclosure();
+  const { isOpen: isNSModalOpen, onOpen: NSModalOpen } = useDisclosure();
   const os = useOS();
   const isDropzone = os === 'linux' || os === 'macos' || os === 'windows';
 
   /**
    * Canvasの取得
-   * @param ref 
-   * @returns 
+   * @param ref
+   * @returns
    */
   const getCanvas = (ref: RefObject<HTMLCanvasElement>): HTMLCanvasElement => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
@@ -56,10 +66,12 @@ function App() {
 
   /**
    * Contextの取得
-   * @param ref 
-   * @returns 
+   * @param ref
+   * @returns
    */
-  const getContext = (ref: RefObject<HTMLCanvasElement>): CanvasRenderingContext2D => {
+  const getContext = (
+    ref: RefObject<HTMLCanvasElement>,
+  ): CanvasRenderingContext2D => {
     const canvas: HTMLCanvasElement = ref.current as HTMLCanvasElement;
 
     return canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -67,23 +79,27 @@ function App() {
 
   /**
    * モデルとアイコン画像の読み込み
-   * @returns 
+   * @returns
    */
   const loadData = async () => {
     if (isModelLoading) return;
-    await faceapi.nets.ssdMobilenetv1.loadFromUri(import.meta.env.BASE_URL + 'model');
-    setIconList(iconNameList.map(item => {
-      const img = new Image();
-      img.src = import.meta.env.BASE_URL + `icons/${item}`;
-      return img;
-    }));
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(
+      import.meta.env.BASE_URL + 'model',
+    );
+    setIconList(
+      iconNameList.map((item) => {
+        const img = new Image();
+        img.src = import.meta.env.BASE_URL + `icons/${item}`;
+        return img;
+      }),
+    );
     setIsModelLoading(true);
   };
 
   /**
    * ファイル受け取り時の処理
-   * @param files 
-   * @returns 
+   * @param files
+   * @returns
    */
   const handleAcceptedFile = async (files: File[] | undefined) => {
     if (files === undefined || files.length === 0) return;
@@ -103,15 +119,20 @@ function App() {
 
       for (const fc of results) {
         const stamp = iconList[Math.floor(Math.random() * iconList.length)];
-        context.drawImage(stamp, fc.box.x, fc.box.y, fc.box.width, fc.box.height);
+        context.drawImage(
+          stamp,
+          fc.box.x,
+          fc.box.y,
+          fc.box.width,
+          fc.box.height,
+        );
       }
 
       const base64 = canvas.toDataURL('image/jpeg');
       images.push({
         name: file.name,
-        url: base64
+        url: base64,
       });
-
     }
     setExportImages(images);
     setIsLoading(false);
@@ -128,7 +149,10 @@ function App() {
    * LINEのブラウザかチェック
    */
   const isLine = () => {
-    if (navigator.userAgent.toUpperCase().includes('LINE') && navigator.userAgent.toUpperCase().includes('ANDROID')) {
+    if (
+      navigator.userAgent.toUpperCase().includes('LINE') &&
+      navigator.userAgent.toUpperCase().includes('ANDROID')
+    ) {
       NSModalOpen();
       window.location.href += '?openExternalBrowser=1';
     }
@@ -140,62 +164,77 @@ function App() {
   }, []);
 
   return (
-    <Container height="100dvh" justifyContent="center">
-      <Heading textAlign="center">Face Masking App</Heading>
+    <Container height='100dvh' justifyContent='center'>
+      <Heading textAlign='center'>Face Masking App</Heading>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      {isDropzone ?
-        <Dropzone multiple
+      {isDropzone ? (
+        <Dropzone
+          multiple
           accept={{
-            'image/*': []
+            'image/*': [],
           }}
           isLoading={isLoading || !isModelLoading}
           onDropAccepted={handleAcceptedFile}
         >
           <Text>顔が写った画像をドラックアンドドロップ</Text>
         </Dropzone>
-        :
+      ) : (
         <FileButton
           multiple
           isLoading={isLoading || !isModelLoading}
           accept='image/*'
           onChange={handleAcceptedFile}
-        >顔が写った画像を選択</FileButton>
-      }
-      {
-        !!exportImages.length &&
-        <Carousel slideSize={isDropzone ? '50%' : 'full'} align="center" controlProps={{
-          background: 'blackAlpha.500'
-        }}
+        >
+          顔が写った画像を選択
+        </FileButton>
+      )}
+      {!!exportImages.length && (
+        <Carousel
+          slideSize={isDropzone ? '50%' : 'full'}
+          align='center'
+          controlProps={{
+            background: 'blackAlpha.500',
+          }}
         >
           {exportImages.map((image, index) => (
-            <CarouselSlide key={index} as={Center} position="relative" background='blackAlpha.100'>
-              <Img src={image.url} w="full" h="full" objectFit="contain" />
+            <CarouselSlide
+              key={index}
+              as={Center}
+              position='relative'
+              background='blackAlpha.100'
+            >
+              <Img src={image.url} w='full' h='full' objectFit='contain' />
               <Button
-                as="a"
-                position="absolute"
-                margin="auto"
-                w="fit-content"
+                as='a'
+                position='absolute'
+                margin='auto'
+                w='fit-content'
                 href={image.url}
                 download={image.name}
                 bottom={10}
                 left={0}
                 right={0}
-                variant="solid"
-                colorScheme="primary"
+                variant='solid'
+                colorScheme='primary'
                 rightIcon={<IoMdDownload />}
-              >ダウンロード</Button>
+              >
+                ダウンロード
+              </Button>
             </CarouselSlide>
           ))}
 
-          <CarouselIndicators sx={{
-            '& > button': {
-              _selected: {
-                background: 'blackAlpha.950'
+          <CarouselIndicators
+            sx={{
+              '& > button': {
+                _selected: {
+                  background: 'blackAlpha.950',
+                },
+                background: 'blackAlpha.500',
               },
-              background: 'blackAlpha.500'
-            }
-          }} />
-        </Carousel>}
+            }}
+          />
+        </Carousel>
+      )}
       <NotSupportModal isOpen={isNSModalOpen} onClick={handleNSModalClick} />
     </Container>
   );
