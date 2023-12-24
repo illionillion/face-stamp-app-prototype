@@ -39,7 +39,7 @@ jobs:
         name: npm install
         run: npm ci
 
-      - name: Install dependencies and build
+      - name: build
         run: |
           npm run rebuild
         env:
