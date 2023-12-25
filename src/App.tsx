@@ -166,6 +166,12 @@ function App() {
   return (
     <Container height='100dvh' justifyContent='center'>
       <Heading textAlign='center'>Face Masking App</Heading>
+      <Container width='100%' display="flex" flexDirection="row" justifyContent='end'>
+        <img></img>
+        <Container width="300px">
+        <FileButton>顔を隠す写真を選択</FileButton>
+        </Container>
+      </Container>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {isDropzone ? (
         <Dropzone
