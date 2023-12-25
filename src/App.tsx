@@ -46,6 +46,7 @@ const iconNameList = [
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [exportImages, setExportImages] = useState<exportImages[]>([]);
+  const [faceCoverImage, setFaceCoverImage] = useState<HTMLImageElement>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
@@ -118,7 +119,13 @@ function App() {
       context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
 
       for (const fc of results) {
-        const stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        let stamp = null
+        // const stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        if(faceCoverImage != undefined) {
+          stamp = faceCoverImage
+        } else {
+          stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        }
         context.drawImage(
           stamp,
           fc.box.x,
@@ -135,6 +142,20 @@ function App() {
       });
     }
     setExportImages(images);
+    setIsLoading(false);
+  };
+
+  /**
+   * 顔を隠す写真を受け取る処理
+   * @param file
+   * @returns
+   */
+  const handleFaceCoverImage = async (files: File[] | undefined) => {
+    setIsLoading(true);
+    if(files == undefined || files[0] == undefined) return
+    const imageObj = new Image();
+    imageObj.src = URL.createObjectURL(files[0]);
+    setFaceCoverImage(imageObj)
     setIsLoading(false);
   };
 
@@ -163,13 +184,29 @@ function App() {
     loadData();
   }, []);
 
+  const handleDebug = () => {
+    console.log(faceCoverImage)
+  }
+
   return (
     <Container height='100dvh' justifyContent='center'>
       <Heading textAlign='center'>Face Masking App</Heading>
       <Container width='100%' display="flex" flexDirection="row" justifyContent='end'>
         <img></img>
+        {/* <Button onClick={handleDebug}></Button> */}
+        {
+          faceCoverImage != undefined ?
+          <Img src={faceCoverImage.src} />
+          : <></>
+        }
         <Container width="300px">
-        <FileButton>顔を隠す写真を選択</FileButton>
+        <FileButton
+          isLoading={isLoading || !isModelLoading}
+          accept='image/*'
+          onChange={handleFaceCoverImage}
+        >
+            顔を隠す写真を選択
+        </FileButton>
         </Container>
       </Container>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
