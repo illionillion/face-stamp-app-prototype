@@ -20,13 +20,10 @@ import {
 import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
+import { MdEditDocument } from 'react-icons/md';
+import type { exportImages } from './@types/exportImages';
+import { EditModal } from './components/EditModal';
 import { NotSupportModal } from './components/NotSupportModal';
-import { MdEditDocument } from "react-icons/md";
-
-type exportImages = {
-  name: string;
-  url: string;
-};
 
 /**
  * アイコン名のリスト
@@ -51,7 +48,14 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
+  const [carouselIndex, setCarouselIndex] = useState<number>(0);
   const { isOpen: isNSModalOpen, onOpen: NSModalOpen } = useDisclosure();
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: EditModalOpen,
+    onClose: EditModalClose,
+  } = useDisclosure();
+  const [editData, setEditData] = useState<exportImages | undefined>(undefined);
   const os = useOS();
   const isDropzone = os === 'linux' || os === 'macos' || os === 'windows';
 
@@ -134,10 +138,21 @@ function App() {
       images.push({
         name: file.name,
         url: base64,
+        fds: results,
       });
     }
     setExportImages(images);
     setIsLoading(false);
+  };
+
+  const handleOpenEditModal = () => {
+    EditModalOpen();
+    setEditData(exportImages[carouselIndex]);
+  };
+
+  const handleCloseEditModal = () => {
+    EditModalClose();
+    setEditData(undefined);
   };
 
   /**
@@ -197,6 +212,8 @@ function App() {
           controlProps={{
             background: 'blackAlpha.500',
           }}
+          index={carouselIndex}
+          onChange={setCarouselIndex}
         >
           {exportImages.map((image, index) => (
             <CarouselSlide
@@ -211,13 +228,14 @@ function App() {
                 bottom={10}
                 left={0}
                 right={0}
-                justifyContent="center"
+                justifyContent='center'
               >
                 <Button
                   w='fit-content'
                   variant='solid'
                   colorScheme='primary'
                   rightIcon={<MdEditDocument />}
+                  onClick={handleOpenEditModal}
                 >
                   編集
                 </Button>
@@ -248,6 +266,11 @@ function App() {
           />
         </Carousel>
       )}
+      <EditModal
+        editData={editData}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+      />
       <NotSupportModal isOpen={isNSModalOpen} onClick={handleNSModalClick} />
     </Container>
   );
