@@ -10,6 +10,7 @@ import {
   Center,
   Container,
   FileButton,
+  HStack,
   Heading,
   Image as Img,
   Text,
@@ -20,6 +21,7 @@ import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
 import { NotSupportModal } from './components/NotSupportModal';
+import { MdEditDocument } from "react-icons/md";
 
 type exportImages = {
   name: string;
@@ -204,22 +206,33 @@ function App() {
               background='blackAlpha.100'
             >
               <Img src={image.url} w='full' h='full' objectFit='contain' />
-              <Button
-                as='a'
+              <HStack
                 position='absolute'
-                margin='auto'
-                w='fit-content'
-                href={image.url}
-                download={image.name}
                 bottom={10}
                 left={0}
                 right={0}
-                variant='solid'
-                colorScheme='primary'
-                rightIcon={<IoMdDownload />}
+                justifyContent="center"
               >
-                ダウンロード
-              </Button>
+                <Button
+                  w='fit-content'
+                  variant='solid'
+                  colorScheme='primary'
+                  rightIcon={<MdEditDocument />}
+                >
+                  編集
+                </Button>
+                <Button
+                  as='a'
+                  w='fit-content'
+                  href={image.url}
+                  download={image.name}
+                  variant='solid'
+                  colorScheme='primary'
+                  rightIcon={<IoMdDownload />}
+                >
+                  ダウンロード
+                </Button>
+              </HStack>
             </CarouselSlide>
           ))}
 
