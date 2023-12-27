@@ -20,6 +20,8 @@ import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
 import { NotSupportModal } from './components/NotSupportModal';
+import { FaImage } from "react-icons/fa";
+import { FaRegSmileWink } from "react-icons/fa";
 
 type exportImages = {
   name: string;
@@ -48,6 +50,7 @@ function App() {
   const [exportImages, setExportImages] = useState<exportImages[]>([]);
   const [faceCoverImage, setFaceCoverImage] = useState<HTMLImageElement>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFaceCoverImageUploading, setIsFaceCoverImageUploading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
   const { isOpen: isNSModalOpen, onOpen: NSModalOpen } = useDisclosure();
@@ -119,10 +122,10 @@ function App() {
       context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
 
       for (const fc of results) {
-        let stamp = null
+        let stamp = null;
         // const stamp = iconList[Math.floor(Math.random() * iconList.length)];
-        if(faceCoverImage != undefined) {
-          stamp = faceCoverImage
+        if (faceCoverImage != undefined) {
+          stamp = faceCoverImage;
         } else {
           stamp = iconList[Math.floor(Math.random() * iconList.length)];
         }
@@ -147,16 +150,16 @@ function App() {
 
   /**
    * 顔を隠す写真を受け取る処理
-   * @param file
+   * @param files
    * @returns
    */
   const handleFaceCoverImage = async (files: File[] | undefined) => {
-    setIsLoading(true);
-    if(files == undefined || files[0] == undefined) return
+    setIsFaceCoverImageUploading(true);
+    if (files == undefined || files[0] == undefined) return;
     const imageObj = new Image();
     imageObj.src = URL.createObjectURL(files[0]);
-    setFaceCoverImage(imageObj)
-    setIsLoading(false);
+    setFaceCoverImage(imageObj);
+    setIsFaceCoverImageUploading(false)
   };
 
   /**
@@ -184,31 +187,24 @@ function App() {
     loadData();
   }, []);
 
-  const handleDebug = () => {
-    console.log(faceCoverImage)
-  }
-
   return (
-    <Container height='100dvh' justifyContent='center'>
+    <Container justifyContent='center'>
       <Heading textAlign='center'>Face Masking App</Heading>
-      <Container width='100%' display="flex" flexDirection="row" justifyContent='end'>
-        <img></img>
-        {/* <Button onClick={handleDebug}></Button> */}
         {
           faceCoverImage != undefined ?
-          <Img src={faceCoverImage.src} />
-          : <></>
+          <Container width='100%' display='flex' flexDirection='row' justifyContent='end'>
+            <Text>右の写真で顔が隠されます。</Text>
+            <Img src={faceCoverImage.src} width='100px' height='100px' />
+          </Container> :
+          <></>
         }
-        <Container width="300px">
         <FileButton
-          isLoading={isLoading || !isModelLoading}
+          isLoading={isFaceCoverImageUploading}
           accept='image/*'
           onChange={handleFaceCoverImage}
         >
-            顔を隠す写真を選択
+          <FaRegSmileWink />顔を隠す写真を選択
         </FileButton>
-        </Container>
-      </Container>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {isDropzone ? (
         <Dropzone
@@ -228,7 +224,7 @@ function App() {
           accept='image/*'
           onChange={handleAcceptedFile}
         >
-          顔が写った画像を選択
+          <FaImage/>顔が写った画像を選択
         </FileButton>
       )}
       {!!exportImages.length && (
