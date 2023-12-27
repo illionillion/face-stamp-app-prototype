@@ -21,7 +21,7 @@ import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
 import { MdEditDocument } from 'react-icons/md';
-import type { exportImages } from './@types/exportImages';
+import type { exportImages, stampImage } from './@types/exportImages';
 import { EditModal } from './components/EditModal';
 import { NotSupportModal } from './components/NotSupportModal';
 
@@ -123,31 +123,41 @@ function App() {
       canvas.height = imageObj.height;
       context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
 
+      const stamp: stampImage[] = [];
+
       for (const fc of results) {
-        const stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        const stampObj = iconList[Math.floor(Math.random() * iconList.length)];
         context.drawImage(
-          stamp,
+          stampObj,
           fc.box.x,
           fc.box.y,
           fc.box.width,
           fc.box.height,
         );
+        stamp.push({
+          stamp: stampObj,
+          x: fc.box.x,
+          y: fc.box.y,
+          width: fc.box.width,
+          height: fc.box.height,
+        });
       }
 
       const base64 = canvas.toDataURL('image/jpeg');
       images.push({
         name: file.name,
         url: base64,
-        fds: results,
+        stamps: stamp,
+        image: imageObj,
       });
     }
     setExportImages(images);
     setIsLoading(false);
   };
 
-  const handleOpenEditModal = () => {
+  const handleOpenEditModal = (index: number) => {
     EditModalOpen();
-    setEditData(exportImages[carouselIndex]);
+    setEditData(exportImages[index]);
   };
 
   const handleCloseEditModal = () => {
@@ -235,7 +245,7 @@ function App() {
                   variant='solid'
                   colorScheme='primary'
                   rightIcon={<MdEditDocument />}
-                  onClick={handleOpenEditModal}
+                  onClick={() => handleOpenEditModal(index)}
                 >
                   編集
                 </Button>

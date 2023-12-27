@@ -1,7 +1,15 @@
-import type { FaceDetection } from '@vladmandic/face-api';
+
+export type stampImage = {
+  stamp: HTMLImageElement;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 export type exportImages = {
   name: string;
   url: string;
-  fds: FaceDetection[];
+  stamps: stampImage[];
+  image: HTMLImageElement;
 };
