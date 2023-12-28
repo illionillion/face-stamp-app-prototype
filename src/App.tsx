@@ -190,20 +190,20 @@ function App() {
   return (
     <Container justifyContent='center'>
       <Heading textAlign='center'>Face Masking App</Heading>
-        {
-          faceCoverImage != undefined ?
+      {
+          faceCoverImage !== undefined &&
           <Container width='100%' display='flex' flexDirection='row' justifyContent='end'>
             <Text>右の写真で顔が隠されます。</Text>
             <Img src={faceCoverImage.src} width='100px' height='100px' />
-          </Container> :
-          <></>
+          </Container>
         }
         <FileButton
           isLoading={isFaceCoverImageUploading}
           accept='image/*'
           onChange={handleFaceCoverImage}
+          leftIcon={<FaRegSmileWink />}
         >
-          <FaRegSmileWink />顔を隠す写真を選択
+          顔を隠す写真を選択
         </FileButton>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {isDropzone ? (
@@ -223,8 +223,9 @@ function App() {
           isLoading={isLoading || !isModelLoading}
           accept='image/*'
           onChange={handleAcceptedFile}
+          leftIcon={<FaImage />}
         >
-          <FaImage/>顔が写った画像を選択
+          顔が写った画像を選択
         </FileButton>
       )}
       {!!exportImages.length && (
