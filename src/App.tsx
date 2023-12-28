@@ -20,6 +20,8 @@ import type { RefObject } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { IoMdDownload } from 'react-icons/io';
 import { NotSupportModal } from './components/NotSupportModal';
+import { FaImage } from "react-icons/fa";
+import { FaRegSmileWink } from "react-icons/fa";
 
 type exportImages = {
   name: string;
@@ -46,7 +48,9 @@ const iconNameList = [
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [exportImages, setExportImages] = useState<exportImages[]>([]);
+  const [faceCoverImage, setFaceCoverImage] = useState<HTMLImageElement>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFaceCoverImageUploading, setIsFaceCoverImageUploading] = useState<boolean>(false);
   const [isModelLoading, setIsModelLoading] = useState<boolean>(false);
   const [iconList, setIconList] = useState<HTMLImageElement[]>([]);
   const { isOpen: isNSModalOpen, onOpen: NSModalOpen } = useDisclosure();
@@ -118,7 +122,13 @@ function App() {
       context.drawImage(imageObj, 0, 0, imageObj.width, imageObj.height);
 
       for (const fc of results) {
-        const stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        let stamp = null;
+        // const stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        if (faceCoverImage != undefined) {
+          stamp = faceCoverImage;
+        } else {
+          stamp = iconList[Math.floor(Math.random() * iconList.length)];
+        }
         context.drawImage(
           stamp,
           fc.box.x,
@@ -136,6 +146,20 @@ function App() {
     }
     setExportImages(images);
     setIsLoading(false);
+  };
+
+  /**
+   * 顔を隠す写真を受け取る処理
+   * @param files
+   * @returns
+   */
+  const handleFaceCoverImage = async (files: File[] | undefined) => {
+    setIsFaceCoverImageUploading(true);
+    if (files == undefined || files[0] == undefined) return;
+    const imageObj = new Image();
+    imageObj.src = URL.createObjectURL(files[0]);
+    setFaceCoverImage(imageObj);
+    setIsFaceCoverImageUploading(false)
   };
 
   /**
@@ -164,8 +188,23 @@ function App() {
   }, []);
 
   return (
-    <Container height='100dvh' justifyContent='center'>
+    <Container justifyContent='center'>
       <Heading textAlign='center'>Face Masking App</Heading>
+      {
+          faceCoverImage !== undefined &&
+          <Container width='100%' display='flex' flexDirection='row' justifyContent='end'>
+            <Text>右の写真で顔が隠されます。</Text>
+            <Img src={faceCoverImage.src} width='100px' height='100px' objectFit='contain' />
+          </Container>
+        }
+        <FileButton
+          isLoading={isFaceCoverImageUploading}
+          accept='image/*'
+          onChange={handleFaceCoverImage}
+          leftIcon={<FaRegSmileWink />}
+        >
+          顔を隠す写真を選択
+        </FileButton>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {isDropzone ? (
         <Dropzone
@@ -184,6 +223,7 @@ function App() {
           isLoading={isLoading || !isModelLoading}
           accept='image/*'
           onChange={handleAcceptedFile}
+          leftIcon={<FaImage />}
         >
           顔が写った画像を選択
         </FileButton>
