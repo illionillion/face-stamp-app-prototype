@@ -194,7 +194,7 @@ function App() {
           faceCoverImage !== undefined &&
           <Container width='100%' display='flex' flexDirection='row' justifyContent='end'>
             <Text>右の写真で顔が隠されます。</Text>
-            <Img src={faceCoverImage.src} width='100px' height='100px' />
+            <Img src={faceCoverImage.src} width='100px' height='100px' objectFit='contain' />
           </Container>
         }
         <FileButton
