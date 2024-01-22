@@ -22,6 +22,7 @@
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "@vladmandic/face-api": "^1.7.12",
     "@yamada-ui/carousel": "^1.0.0",
