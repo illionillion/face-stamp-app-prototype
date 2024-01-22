@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/face-stamp-app-prototype/sw.js', { scope: '/face-stamp-app-prototype/' })})}
